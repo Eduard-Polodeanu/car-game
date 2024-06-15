@@ -1,4 +1,5 @@
 import math
+import random
 import pygame
 
 
@@ -59,6 +60,18 @@ def calculate_angle(pos1, pos2):
     x2, y2 = pos2
     delta_x = x2 - x1
     delta_y = y2 - y1
-    angle = math.atan2(delta_y, delta_x)  # Angle in radians
-    angle_degrees = math.degrees(angle)  # Convert angle to degrees (optional)
-    return angle_degrees
+
+    if delta_y == 0:
+        angle = math.pi / 2
+    else:
+        angle = math.atan(delta_x / delta_y)
+    return angle
+
+
+def get_random_point_on_line(point1, point2):
+    x1, y1 = point1
+    x2, y2 = point2
+    t = random.random()
+    x_random = x1 + t * (x2 - x1)
+    y_random = y1 + t * (y2 - y1)
+    return (round(x_random), round(y_random))
