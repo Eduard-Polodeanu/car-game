@@ -32,6 +32,7 @@ class Car:
         blit_rotate_center(win, self.img, (self.x, self.y), self.angle)
 
     def move(self):
+        self.angle = (self.angle + 360) % 360
         radians = math.radians(self.angle)
         vertical = math.cos(radians) * self.vel
         horizontal = math.sin(radians) * self.vel

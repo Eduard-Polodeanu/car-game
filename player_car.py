@@ -2,12 +2,18 @@ import pygame
 
 from car import Car
 from utils import is_point_on_line
-
+LEFT_RAYS_DIRECTION = [120]
+RIGHT_RAYS_DIRECTION = [60]
 
 class PlayerCar(Car):
     def __init__(self, checkpoints):
         super().__init__(checkpoints)
         self.reset()
+        self.left_rays_directions = LEFT_RAYS_DIRECTION
+        self.right_rays_directions = RIGHT_RAYS_DIRECTION
+        self.middle_line =  []
+        self.abcd = []
+        self.abcd2 = []
 
     def reset(self):
         self.vel = 0
@@ -20,6 +26,7 @@ class PlayerCar(Car):
         for i in range(0, len(self.checkpoints)):
             pygame.draw.line(window, (255, 0, 0), self.checkpoints[i][0], self.checkpoints[i][1], 3)
         pygame.draw.line(window, (0, 0, 255), self.finish_line_pos[0], self.finish_line_pos[1], 3)
+        # pygame.draw.line(window, (255, 255, 0), self.middle_line[0], self.middle_line[1], 3)
 
     def move(self):
         super().move()
@@ -47,7 +54,7 @@ class PlayerCar(Car):
 
     def reset_checkpoints(self):
         self.finish_line_pos = [(604, 49), (600, 185)]
-        self.checkpoints = [[(738, 63), (712, 186)], [(848, 76), (799, 220)], [(968, 121), (870, 244)], [(903, 282), (1127, 272)], [(862, 347), (1033, 455)], [(762, 407), (818, 556)], [(631, 422), (624, 556)], [(503, 390), (421, 534)], [(419, 344), (234, 447)], [(392, 282), (147, 303)], [(451, 226), (262, 129)], [(525, 195), (452, 42)]]
+        self.checkpoints = [[(212, 217), (387, 260)], [(364, 114), (445, 208)], [(527, 75), (549, 174)], [(687, 72), (694, 163)], [(843, 98), (810, 191)], [(998, 170), (903, 252)], [(922, 306), (1083, 305)], [(884, 372), (977, 452)], [(750, 433), (779, 523)], [(597, 439), (585, 533)], [(465, 406), (425, 509)], [(386, 343), (242, 421)]]
         self.checkpoints_left = len(self.checkpoints)
 
     def hit_wall(self):

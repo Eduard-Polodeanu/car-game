@@ -13,7 +13,7 @@ class ComputerCar(Car):
         super().__init__(checkpoints)
         self.reset()
         self.path_targets = []
-        self.vel = 2
+        self.vel = 4
         self.car_level = car_level
         self.left_rays_directions = LEFT_RAYS_DIRECTION
         self.right_rays_directions = RIGHT_RAYS_DIRECTION
@@ -28,9 +28,10 @@ class ComputerCar(Car):
             pygame.draw.circle(window, (255, 0, 0), target, 5)
         
     def move(self):
-        self.update_angle()
-        self.reached_check()
-        super().move()
+        if len(self.checkpoints):
+            self.update_angle()
+            self.reached_check()
+            super().move()
 
 
     def find_targets(self):
@@ -55,7 +56,7 @@ class ComputerCar(Car):
     def update_angle(self):
         if len(self.path_targets) == 0:
             self.find_targets()
-        
+
         target = self.path_targets[0]
 
         radian_angle = calculate_angle((self.x, self.y), target)
@@ -67,12 +68,16 @@ class ComputerCar(Car):
 
         if difference_in_angle >= 180:
             difference_in_angle -= 360
-
+        if difference_in_angle <= -180:
+            difference_in_angle += 360
+        #print(self.angle, degrees_angle, difference_in_angle)
         if difference_in_angle > 0:
             self.angle -= min(self.rotation_vel, abs(difference_in_angle))
         else:
-            self.angle += min(self.rotation_vel, abs(difference_in_angle))
-
+            if difference_in_angle > -180:
+                self.angle += min(self.rotation_vel, abs(difference_in_angle))
+            else:
+                self.angle -= min(self.rotation_vel, abs(difference_in_angle))
 
     def reached_check(self):
         car_rectangle = pygame.Rect(self.x, self.y, self.img.get_width(), self.img.get_height())

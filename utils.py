@@ -80,3 +80,17 @@ def draw_rays(surface, start_pos, directions, angle, length):
     for d in directions:
         end_x, end_y = calculate_line_endpoints(start_pos[0], start_pos[1], angle + d, length)
         pygame.draw.line(surface, (0, 255, 0), start_pos, (end_x, end_y), 3)
+
+
+
+def refl(x1, y1, x2, y2, xp, yp):
+    x12 = x2 - x1
+    y12 = y2 - y1
+    xxp = xp - x1
+    yyp = yp - y1
+    dotp = x12 * xxp + y12 * yyp
+    dot12 = x12 * x12 + y12 * y12
+    coeff = dotp / dot12
+    lx = x1 + x12 * coeff
+    ly = y1 + y12 * coeff
+    return 2*lx-xp, 2*ly-yp
