@@ -5,18 +5,14 @@ from car import Car
 from utils import calculate_angle, get_random_point_on_line
 
 
-LEFT_RAYS_DIRECTION = [150, 120]
-RIGHT_RAYS_DIRECTION = [30, 60]
-
 class ComputerCar(Car):
     def __init__(self, checkpoints, car_level):
         super().__init__(checkpoints)
         self.reset()
         self.path_targets = []
-        self.vel = 4
+        self.vel = 3
         self.car_level = car_level
-        self.left_rays_directions = LEFT_RAYS_DIRECTION
-        self.right_rays_directions = RIGHT_RAYS_DIRECTION
+
 
     def reset(self):
         self.x, self.y = 275, 270
@@ -82,6 +78,6 @@ class ComputerCar(Car):
     def reached_check(self):
         car_rectangle = pygame.Rect(self.x, self.y, self.img.get_width(), self.img.get_height())
         if car_rectangle.collidepoint(self.path_targets[0]):
-            del self.path_targets[0]
+            del self.path_targets[0]    
 
-    
+

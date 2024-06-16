@@ -2,18 +2,12 @@ import pygame
 
 from car import Car
 from utils import is_point_on_line
-LEFT_RAYS_DIRECTION = [120]
-RIGHT_RAYS_DIRECTION = [60]
+
 
 class PlayerCar(Car):
     def __init__(self, checkpoints):
         super().__init__(checkpoints)
         self.reset()
-        self.left_rays_directions = LEFT_RAYS_DIRECTION
-        self.right_rays_directions = RIGHT_RAYS_DIRECTION
-        self.middle_line =  []
-        self.abcd = []
-        self.abcd2 = []
 
     def reset(self):
         self.vel = 0
@@ -26,7 +20,6 @@ class PlayerCar(Car):
         for i in range(0, len(self.checkpoints)):
             pygame.draw.line(window, (255, 0, 0), self.checkpoints[i][0], self.checkpoints[i][1], 3)
         pygame.draw.line(window, (0, 0, 255), self.finish_line_pos[0], self.finish_line_pos[1], 3)
-        # pygame.draw.line(window, (255, 255, 0), self.middle_line[0], self.middle_line[1], 3)
 
     def move(self):
         super().move()

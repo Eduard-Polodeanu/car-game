@@ -1,6 +1,6 @@
 import pygame
 import math
-from utils import blit_rotate_center, calculate_angle, get_random_point_on_line, is_point_on_line, scale_image
+from utils import blit_rotate_center, scale_image
 
 CAR_IMG = scale_image(pygame.image.load("assets/car.png"), 0.5)
 CAR_MASK = pygame.mask.from_surface(scale_image(pygame.image.load("assets/car-hitbox.png"), 0.5))
