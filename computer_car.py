@@ -5,6 +5,9 @@ from car import Car
 from utils import calculate_angle, get_random_point_on_line
 
 
+LEFT_RAYS_DIRECTION = [150, 120]
+RIGHT_RAYS_DIRECTION = [30, 60]
+
 class ComputerCar(Car):
     def __init__(self, checkpoints, car_level):
         super().__init__(checkpoints)
@@ -12,6 +15,8 @@ class ComputerCar(Car):
         self.path_targets = []
         self.vel = 2
         self.car_level = car_level
+        self.left_rays_directions = LEFT_RAYS_DIRECTION
+        self.right_rays_directions = RIGHT_RAYS_DIRECTION
 
     def reset(self):
         self.x, self.y = 275, 270

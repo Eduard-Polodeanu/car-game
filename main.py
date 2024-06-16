@@ -2,7 +2,7 @@ import pygame
 
 from computer_car import ComputerCar
 from player_car import PlayerCar
-from utils import draw_checkpoint_onclick
+from utils import draw_checkpoint_onclick, draw_rays
 
 pygame.init()
 
@@ -14,6 +14,9 @@ WIN_SIZE = (1280, 720)
 FPS = 60
 
 CHECKPOINTS = [[(738, 63), (712, 186)], [(848, 76), (799, 220)], [(968, 121), (870, 244)], [(903, 282), (1127, 272)], [(862, 347), (1033, 455)], [(762, 407), (818, 556)], [(631, 422), (624, 556)], [(503, 390), (421, 534)], [(419, 344), (234, 447)], [(392, 282), (147, 303)], [(451, 226), (262, 129)], [(525, 195), (452, 42)]]
+
+surface_left_rays = pygame.Surface((WIN_SIZE[0], WIN_SIZE[1]), pygame.SRCALPHA)
+surface_right_rays = pygame.Surface((WIN_SIZE[0], WIN_SIZE[1]), pygame.SRCALPHA)
 
 
 class GameEnvironment:
@@ -49,6 +52,15 @@ class GameEnvironment:
             self.player_car.hit_wall()
 
 
+        mask_left_rays = pygame.mask.from_surface(surface_left_rays.convert_alpha())
+        if mask_left_rays.overlap(TRACK_BORDER_MASK, (0,0)):
+            print("Danger: car is close to the wall! (left side)")
+        
+        mask_right_rays = pygame.mask.from_surface(surface_right_rays.convert_alpha())
+        if mask_right_rays.overlap(TRACK_BORDER_MASK, (0,0)):
+            print("Danger: car is close to the wall! (right side)")
+
+
         self.draw()
         self.clock.tick(FPS)
 
@@ -60,7 +72,15 @@ class GameEnvironment:
         self.window.blit(TRACK_BORDER, (0, 0))
 
         self.player_car.draw(self.window)
-        self.computer_car.draw(self.window)    
+        self.computer_car.draw(self.window)   
+
+
+        surface_left_rays.fill((0,0,0,0))
+        surface_right_rays.fill((0,0,0,0))
+        draw_rays(surface_left_rays, self.computer_car.center_pos, self.computer_car.left_rays_directions, self.computer_car.angle, 30) 
+        draw_rays(surface_right_rays, self.computer_car.center_pos, self.computer_car.right_rays_directions, self.computer_car.angle, 30) 
+        self.window.blit(surface_left_rays, (0,0))
+        self.window.blit(surface_right_rays, (0,0)) 
         
         pygame.display.flip()
 
