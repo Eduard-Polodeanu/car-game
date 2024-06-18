@@ -1,6 +1,6 @@
 import pygame
 import math
-from utils import blit_rotate_center, scale_image
+from utils import blit_rotate_center, is_point_on_line, scale_image
 
 CAR_IMG = scale_image(pygame.image.load("assets/car.png"), 0.5)
 CAR_MASK = pygame.mask.from_surface(scale_image(pygame.image.load("assets/car-hitbox.png"), 0.5))
@@ -22,7 +22,8 @@ class Car:
         self.max_vel = MAX_VELOCITY
         self.rotation_vel = ROTATION_VELOCITY
         self.acceleration = ACCELERATION
-        self.checkpoints = checkpoints
+        self.original_checkpoints = checkpoints[:]
+        self.finish_line_pos = [(375, 312), (186, 334)]
         
     def reset(self):
         self.angle = 0
@@ -34,10 +35,8 @@ class Car:
     def move(self):
         self.angle = (self.angle + 360) % 360
         radians = math.radians(self.angle)
-        vertical = math.cos(radians) * self.vel
-        horizontal = math.sin(radians) * self.vel
-        self.y -= vertical
-        self.x -= horizontal
+        self.y -= math.cos(radians) * self.vel
+        self.x -= math.sin(radians) * self.vel
         self.center_pos = (self.x + self.img.get_width()/2, self.y + self.img.get_height()/2)
 
 
@@ -45,7 +44,4 @@ class Car:
         offset = (int(self.x - x), int(self.y - y))
         intersection_point = mask.overlap(self.mask, offset)
         return intersection_point
-
-
-
 

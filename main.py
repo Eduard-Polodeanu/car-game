@@ -53,12 +53,15 @@ class GameEnvironment:
 
         surface_mask = pygame.mask.from_surface(surface_left_rays.convert_alpha())
         if surface_mask.overlap(TRACK_BORDER_MASK, (0,0)):
-            self.computer_car.angle -= self.computer_car.rotation_vel * 2
+            self.computer_car.angle += -self.computer_car.rotation_vel * 2
             
         surface_mask = pygame.mask.from_surface(surface_right_rays.convert_alpha())
         if surface_mask.overlap(TRACK_BORDER_MASK, (0,0)):
             self.computer_car.angle += self.computer_car.rotation_vel * 2
 
+        if self.player_car.hit_finish() or self.computer_car.hit_finish():
+            self.player_car.reset()
+            self.computer_car.reset()
 
         self.draw()
         self.clock.tick(FPS)
@@ -88,28 +91,32 @@ class GameEnvironment:
 
         if keys[pygame.K_a]:
             if not keys[pygame.K_s]:
-                self.player_car.rotate(left=True)
+                self.player_car.angle += self.player_car.rotation_vel
             else:
-                self.player_car.rotate(right=True)
+                self.player_car.angle -= self.player_car.rotation_vel
         if keys[pygame.K_d]:
             if not keys[pygame.K_s]:
-                self.player_car.rotate(right=True)
+                self.player_car.angle -= self.player_car.rotation_vel
             else:
-                self.player_car.rotate(left=True)
+                self.player_car.angle += self.player_car.rotation_vel
+                
         if keys[pygame.K_w]:
             moving = True
-            self.player_car.move_forward()
+            self.player_car.vel = min(self.player_car.vel + self.player_car.acceleration, self.player_car.max_vel)
+            self.player_car.move()
         if keys[pygame.K_s]:
             moving = True
-            self.player_car.move_backward()
+            self.player_car.vel = min(self.player_car.vel - self.player_car.acceleration, -self.player_car.max_vel/2)
+            self.player_car.move()
 
         if not moving:
-            self.player_car.reduce_speed()
+            self.player_car.vel = max(self.player_car.vel - self.player_car.acceleration/2, 0)
+            self.player_car.move()
 
 
 if __name__ == '__main__':
     player_car = PlayerCar(CHECKPOINTS)
-    computer_car = ComputerCar(CHECKPOINTS, car_level=1)
+    computer_car = ComputerCar(CHECKPOINTS, car_level=2)
     game = GameEnvironment(player_car, computer_car)
     pygame.display.set_caption("Track navigator")
 
