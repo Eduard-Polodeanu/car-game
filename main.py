@@ -18,16 +18,54 @@ surface_left_rays = pygame.Surface((WIN_SIZE[0], WIN_SIZE[1]), pygame.SRCALPHA)
 surface_right_rays = pygame.Surface((WIN_SIZE[0], WIN_SIZE[1]), pygame.SRCALPHA)
 
 
+
+LEVELS = [
+    {
+        "track_image": "assets/track2.png",
+        "track_border_image": "assets/track-hitbox2.png",
+        "checkpoints": [[(212, 217), (387, 260)], [(364, 114), (445, 208)], [(527, 75), (549, 174)], [(687, 72), (694, 163)], [(843, 98), (810, 191)], [(998, 170), (903, 252)], [(922, 306), (1083, 305)], [(884, 372), (977, 452)], [(750, 433), (779, 523)], [(597, 439), (585, 533)], [(465, 406), (425, 509)], [(386, 343), (242, 421)]],  
+        "finish_line": [(375, 312), (186, 334)],
+    },
+    {
+        "track_image": "assets/track.png",
+        "track_border_image": "assets/track-hitbox.png",
+        "checkpoints": [[(100, 100), (200, 200)]],
+        "finish_line": [(593, 76), (597, 146)]
+    }
+]
+
+
 class GameEnvironment:
     def __init__(self, player_car, computer_car):
         self.window = pygame.display.set_mode(WIN_SIZE, flags=pygame.SCALED, vsync=1)
         self.clock = pygame.time.Clock()
         self.player_car = player_car
         self.computer_car = computer_car
-      
-        self.checkpoints = CHECKPOINTS
+        
+        self.current_level = 0
+        self.load_level(self.current_level)
+
         self.new_checkpoint_pos = []
 
+
+    def load_level(self, level_index):
+        level_data = LEVELS[level_index]
+        self.track = pygame.image.load(level_data["track_image"])
+        self.track_border = pygame.image.load(level_data["track_border_image"])
+        self.track_border_mask = pygame.mask.from_surface(self.track_border)
+        self.checkpoints = level_data["checkpoints"]
+        self.finish_line_pos = level_data["finish_line"]
+        self.player_car.reset(self.checkpoints, self.finish_line_pos)
+        self.computer_car.reset(self.checkpoints, self.finish_line_pos)
+
+    def next_level(self):
+        self.current_level += 1
+        if self.current_level >= len(LEVELS):
+            print("You have completed all levels!")
+            pygame.quit()
+            quit()
+        else:
+            self.load_level(self.current_level)
 
     def play(self):
         is_game_over = False
@@ -59,9 +97,6 @@ class GameEnvironment:
         if surface_mask.overlap(TRACK_BORDER_MASK, (0,0)):
             self.computer_car.angle += self.computer_car.rotation_vel * 2
 
-        if self.player_car.hit_finish() or self.computer_car.hit_finish():
-            self.player_car.reset()
-            self.computer_car.reset()
 
         self.draw()
         self.clock.tick(FPS)
@@ -115,14 +150,18 @@ class GameEnvironment:
 
 
 if __name__ == '__main__':
-    player_car = PlayerCar(CHECKPOINTS)
-    computer_car = ComputerCar(CHECKPOINTS, car_level=2)
+    player_car = PlayerCar()
+    computer_car = ComputerCar(car_level=2)
     game = GameEnvironment(player_car, computer_car)
     pygame.display.set_caption("Track navigator")
 
     running = True
     while running:
-        is_game_over= game.play()
+        is_game_over = game.play()
+
+        if game.player_car.hit_finish() or game.computer_car.hit_finish():
+            game.next_level()
+        
         if is_game_over == True:
             running = False
 

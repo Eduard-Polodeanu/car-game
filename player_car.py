@@ -5,17 +5,16 @@ from utils import is_point_on_line
 
 
 class PlayerCar(Car):
-    def __init__(self, checkpoints):
-        super().__init__(checkpoints)
-        self.reset()
+    def __init__(self):
+        super().__init__()
         self.acceleration = 0.2
 
-    def reset(self):
+    def reset(self, checkpoints, finish_line_pos):
+        super().reset(checkpoints, finish_line_pos)
         self.vel = 0
         self.x, self.y = 250, 270
         self.current_checkpoints = self.original_checkpoints[:]
         self.checkpoints_left = len(self.current_checkpoints)
-        super().reset()
 
     def draw(self, window):
         super().draw(window)

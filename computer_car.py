@@ -6,16 +6,15 @@ from utils import calculate_angle, get_random_point_on_line, is_point_on_line
 
 
 class ComputerCar(Car):
-    def __init__(self, checkpoints, car_level):
-        super().__init__(checkpoints)
+    def __init__(self, car_level):
+        super().__init__()
         self.vel = 3
         self.car_level = car_level
-        self.reset()
 
-    def reset(self):
+    def reset(self, checkpoints, finish_line_pos):
+        super().reset(checkpoints, finish_line_pos)
         self.x, self.y = 275, 270
         self.path_targets = []
-        super().reset()
 
     def draw(self, window):
         super().draw(window)

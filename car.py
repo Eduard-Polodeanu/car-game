@@ -12,7 +12,7 @@ ACCELERATION = 0.05
 
 
 class Car:
-    def __init__(self, checkpoints, x=CAR_START_POS[0], y=CAR_START_POS[1]):
+    def __init__(self, x=CAR_START_POS[0], y=CAR_START_POS[1]):
         self.img = CAR_IMG
         self.mask = CAR_MASK
         self.x, self.y = x, y
@@ -22,12 +22,12 @@ class Car:
         self.max_vel = MAX_VELOCITY
         self.rotation_vel = ROTATION_VELOCITY
         self.acceleration = ACCELERATION
-        self.original_checkpoints = checkpoints[:]
-        self.finish_line_pos = [(375, 312), (186, 334)]
         
-    def reset(self):
+    def reset(self, checkpoints, finish_line_pos):
         self.angle = 0
         self.center_pos = (self.x + self.img.get_width()/2, self.y + self.img.get_height()/2)
+        self.original_checkpoints = checkpoints[:]
+        self.finish_line_pos = finish_line_pos[:]
      
     def draw(self, win):
         blit_rotate_center(win, self.img, (self.x, self.y), self.angle)
