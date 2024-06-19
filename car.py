@@ -4,18 +4,18 @@ from utils import blit_rotate_center, is_point_on_line, scale_image
 
 CAR_IMG = scale_image(pygame.image.load("assets/car.png"), 0.5)
 CAR_MASK = pygame.mask.from_surface(scale_image(pygame.image.load("assets/car-hitbox.png"), 0.5))
-CAR_START_POS = (250, 270)
+CAR_START_POS = (10, 340)
 
-MAX_VELOCITY = 3.5
+MAX_VELOCITY = 4
 ROTATION_VELOCITY = 4
-ACCELERATION = 0.05
+ACCELERATION = 1
 
 
 class Car:
-    def __init__(self, x=CAR_START_POS[0], y=CAR_START_POS[1]):
+    def __init__(self, start_position=CAR_START_POS):
         self.img = CAR_IMG
         self.mask = CAR_MASK
-        self.x, self.y = x, y
+        self.x, self.y = start_position
         self.center_pos = (self.x + self.img.get_width()/2, self.y + self.img.get_height()/2)
         self.angle = 0
         self.vel = 0

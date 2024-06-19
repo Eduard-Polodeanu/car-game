@@ -9,17 +9,17 @@ class ComputerCar(Car):
     def __init__(self, car_level):
         super().__init__()
         self.vel = 3
-        self.car_level = car_level
+        self.car_level = car_level + 1
 
-    def reset(self, checkpoints, finish_line_pos):
+    def reset(self, checkpoints, finish_line_pos, start_position):
         super().reset(checkpoints, finish_line_pos)
-        self.x, self.y = 275, 270
+        self.x, self.y = start_position
         self.path_targets = []
 
     def draw(self, window):
         super().draw(window)
         for target in self.path_targets:
-            pygame.draw.circle(window, (255, 0, 0), target, 6)
+            pygame.draw.circle(window, (255, 0, 0), target, 8)
         
     def move(self):
         self.update_angle()

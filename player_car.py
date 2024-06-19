@@ -7,20 +7,19 @@ from utils import is_point_on_line
 class PlayerCar(Car):
     def __init__(self):
         super().__init__()
-        self.acceleration = 0.2
 
-    def reset(self, checkpoints, finish_line_pos):
+    def reset(self, checkpoints, finish_line_pos, start_position):
         super().reset(checkpoints, finish_line_pos)
         self.vel = 0
-        self.x, self.y = 250, 270
+        self.x, self.y = start_position
         self.current_checkpoints = self.original_checkpoints[:]
         self.checkpoints_left = len(self.current_checkpoints)
 
     def draw(self, window):
         super().draw(window)
         for i in range(0, len(self.current_checkpoints)):
-            pygame.draw.line(window, (255, 0, 0), self.current_checkpoints[i][0], self.current_checkpoints[i][1], 3)
-        pygame.draw.line(window, (0, 0, 255), self.finish_line_pos[0], self.finish_line_pos[1], 3)
+            pygame.draw.line(window, (0, 0, 0), self.current_checkpoints[i][0], self.current_checkpoints[i][1], 3)
+        pygame.draw.line(window, (255, 255, 255), self.finish_line_pos[0], self.finish_line_pos[1], 3)
 
     def move(self):
         super().move()
