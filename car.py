@@ -1,13 +1,13 @@
 import pygame
 import math
-from utils import blit_rotate_center, is_point_on_line, scale_image
+from utils import blit_rotate_center, scale_image
 
 CAR_IMG = scale_image(pygame.image.load("assets/car.png"), 0.5)
 CAR_MASK = pygame.mask.from_surface(scale_image(pygame.image.load("assets/car-hitbox.png"), 0.5))
 CAR_START_POS = (10, 340)
 
 MAX_VELOCITY = 4
-ROTATION_VELOCITY = 4
+ROTATION_VELOCITY = 5
 ACCELERATION = 1
 
 
@@ -22,6 +22,7 @@ class Car:
         self.max_vel = MAX_VELOCITY
         self.rotation_vel = ROTATION_VELOCITY
         self.acceleration = ACCELERATION
+        self.upgrades_list = []
         
     def reset(self, checkpoints, finish_line_pos):
         self.angle = 0

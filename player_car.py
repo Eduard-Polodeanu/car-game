@@ -43,5 +43,14 @@ class PlayerCar(Car):
         if is_point_on_line(self.center_pos, self.finish_line_pos, max(self.img.get_width(), self.img.get_height())/2) and self.checkpoints_left == 0:
             return True
         return False
+    
+    def set_perks(self, perks_list):
+        if perks_list[0]:
+            self.acceleration += 0.1
+            self.max_vel += 0.5
+            # print("Engine upgraded: ", self.acceleration, self.max_vel)
+        if perks_list[1]:
+            self.rotation_vel += 1
+            # print("Steering upgraded: ", self.rotation_vel)
 
     

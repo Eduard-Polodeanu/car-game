@@ -81,3 +81,7 @@ class ComputerCar(Car):
             return True
         return False
 
+    def set_perks(self, perks_list):
+        if perks_list[2]:
+            self.car_level += -1
+            # print("Computer car was sabotated: car level ", self.car_level)
