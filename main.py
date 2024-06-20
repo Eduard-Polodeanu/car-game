@@ -1,7 +1,7 @@
 import pygame
 
-from button import Button
 from computer_car import ComputerCar
+from menu import Menu
 from player_car import PlayerCar
 from utils import draw_checkpoint_onclick, draw_rays
 
@@ -10,10 +10,6 @@ pygame.init()
 WIN_SIZE = (1280, 720)
 FPS = 60
 
-BG_IMG = pygame.image.load("assets/menu-bg.png")
-BUTTON_IMG = pygame.image.load("assets/button.png")
-FONT_100 = pygame.font.SysFont("arialblack", 100)
-FONT_60 = pygame.font.SysFont("arialblack", 60)
 
 surface_left_rays = pygame.Surface((WIN_SIZE[0], WIN_SIZE[1]), pygame.SRCALPHA)
 surface_right_rays = pygame.Surface((WIN_SIZE[0], WIN_SIZE[1]), pygame.SRCALPHA)
@@ -46,13 +42,16 @@ class GameEnvironment:
         self.player_car = player_car
         self.computer_car = computer_car
 
-        self.is_show_menu = True
+        self.menu_booleans = {"is_show_menu": True, "is_game_paused": False, "is_show_next_level_menu": False, "is_show_end_screen": False}
+        self.menu = Menu(self.window, self.menu_booleans)
+        
         self.is_game_over = False
-        self.is_game_paused = False
-
+        self.final_score = [0] * len(LEVELS)
+        
         self.current_level = 0
         self.load_level(self.current_level)
 
+        
         self.new_checkpoint_pos = []
 
 
@@ -68,24 +67,30 @@ class GameEnvironment:
         self.computer_car.reset(self.checkpoints, self.finish_line_pos, self.start_position[1])
         self.can_start_level = False
 
-    def next_level(self):
+    def next_level(self, won_round):
+        self.final_score[self.current_level] = self.player_car.current_score
         self.current_level += 1
         if self.current_level >= len(LEVELS):
-            print("You have completed all levels!")
+            self.menu.menu_booleans["is_show_end_screen"] = True
+            self.menu.end_screen(self.final_score)
             pygame.quit()
             quit()
         else:
-            self.computer_car.car_level += 1
+            self.menu.menu_booleans["is_show_next_level_menu"] = True
+            if won_round:
+                self.computer_car.car_level += 1
+            else:
+                pass
+            self.menu.next_level_menu(self.current_level, self.player_car.current_score)
             self.load_level(self.current_level)
 
     def start(self):
-        if self.is_show_menu:
-            self.main_menu()
+        if self.menu.menu_booleans["is_show_menu"]:
+            self.menu.main_menu()
         else:
             self.play()
             
             
-    
 
     def play(self):
         for event in pygame.event.get():
@@ -96,9 +101,10 @@ class GameEnvironment:
             if event.type == pygame.KEYDOWN:
                 self.can_start_level = True
                 if event.key == pygame.K_ESCAPE:
-                    self.is_game_paused = True
+                    self.menu.menu_booleans["is_game_paused"] = True
                 if event.key == pygame.K_m:
-                    self.is_show_menu = True
+                    #self.is_show_menu = True
+                    self.next_level(True)
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 click_pos = pygame.mouse.get_pos()
@@ -126,7 +132,7 @@ class GameEnvironment:
 
         else:
             pass
-            #print("wait for input")
+            #print("press any key to start")
 
 
 
@@ -179,43 +185,6 @@ class GameEnvironment:
             self.player_car.move()
 
 
-    def main_menu(self):
-        while self.is_show_menu:
-            self.window.blit(BG_IMG, (0, 0))
-            #self.window.fill("#726E6E")
-
-            mouse_pos = pygame.mouse.get_pos()
-
-            MENU_TEXT = FONT_100.render("MAIN MENU", True, "#f1f4c6")
-            MENU_RECT = MENU_TEXT.get_rect(center=(640, 100))
-
-            PLAY_BUTTON = Button(BUTTON_IMG, (640, 320), "START", FONT_60, "#f1f4c6", "white")
-            OPTIONS_BUTTON = Button(BUTTON_IMG, (640, 450), "OPTIONS", FONT_60, "#f1f4c6", "white")
-            QUIT_BUTTON = Button(BUTTON_IMG, (640, 580), "QUIT", FONT_60, "#f1f4c6", "white")
-
-            self.window.blit(MENU_TEXT, MENU_RECT)
-
-            for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON]:
-                button.changeColor(mouse_pos)
-                button.update(self.window)
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    quit()
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if PLAY_BUTTON.checkForInput(mouse_pos):
-                        self.is_show_menu = False
-                    if OPTIONS_BUTTON.checkForInput(mouse_pos):
-                        pass
-                    if QUIT_BUTTON.checkForInput(mouse_pos):
-                        pygame.quit()
-                        quit()
-
-            pygame.display.flip()
-
-
-
 
 
 if __name__ == '__main__':
@@ -227,10 +196,12 @@ if __name__ == '__main__':
     while running:
         game.start()
 
-        if game.player_car.hit_finish() or game.computer_car.hit_finish():
-            game.next_level()
+        if game.player_car.hit_finish():
+            game.next_level(won_round=True)
+        elif game.computer_car.hit_finish():
+            game.next_level(won_round=False)
         
-        if game.is_game_paused == True:
+        if game.menu.menu_booleans["is_game_paused"] == True:
             print("GAME IS PAUSED")
 
         if game.is_game_over == True:
