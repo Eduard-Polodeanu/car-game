@@ -20,21 +20,27 @@ LEVELS = [
         "track_border_image": "assets/track-1-hitbox.png",
         "checkpoints": [[(59, 163), (100, 204)], [(177, 130), (185, 190)], [(576, 130), (576, 191)], [(966, 132), (966, 188)], [(1033, 198), (1070, 148)], [(1067, 257), (1121, 231)], [(1177, 333), (1206, 282)], [(1201, 376), (1272, 376)], [(1177, 441), (1223, 477)], [(1089, 481), (1089, 538)], [(897, 483), (886, 539)], [(866, 463), (805, 485)], [(823, 406), (879, 430)], [(960, 357), (978, 412)], [(938, 311), (975, 266)], [(850, 223), (850, 277)], [(759, 261), (808, 295)], [(630, 452), (671, 496)], [(566, 448), (541, 497)], [(251, 261), (215, 307)], [(201, 315), (132, 301)], [(220, 413), (273, 384)], [(227, 447), (236, 508)], [(107, 418), (69, 461)], [(81, 378), (14, 385)]],
         "finish_line": [(11, 310), (76, 310)],
-        "start_position": [(40, 340), (10, 340)]
+        "start_position": [(40, 340), (10, 340)],
+        "ideal_time": 30,
+        "max_time": 60
     },
     {
         "track_image": "assets/track-2.png",
         "track_border_image": "assets/track-2-hitbox.png",
         "checkpoints": [[(428, 146), (369, 142)], [(369, 77), (431, 137)], [(443, 147), (499, 123)], [(449, 301), (511, 299)], [(525, 299), (571, 341)], [(586, 225), (621, 280)], [(857, 177), (885, 236)], [(976, 72), (982, 138)], [(996, 172), (1056, 165)], [(978, 267), (1027, 314)], [(953, 389), (889, 376)], [(910, 456), (975, 475)], [(830, 517), (876, 559)], [(775, 621), (824, 662)], [(613, 615), (558, 662)], [(546, 521), (597, 478)], [(512, 522), (458, 483)], [(442, 593), (471, 654)], [(426, 579), (369, 599)]],
         "finish_line": [(366, 474), (426, 477)],
-        "start_position": [(390, 430), (360, 430)]
+        "start_position": [(390, 430), (360, 430)],
+        "ideal_time": 20,
+        "max_time": 40
     },
     {
         "track_image": "assets/track-2.png",
         "track_border_image": "assets/track-2-hitbox.png",
         "checkpoints": [[(428, 146), (369, 142)], [(369, 77), (431, 137)], [(443, 147), (499, 123)], [(449, 301), (511, 299)], [(525, 299), (571, 341)], [(586, 225), (621, 280)], [(857, 177), (885, 236)], [(976, 72), (982, 138)], [(996, 172), (1056, 165)], [(978, 267), (1027, 314)], [(953, 389), (889, 376)], [(910, 456), (975, 475)], [(830, 517), (876, 559)], [(775, 621), (824, 662)], [(613, 615), (558, 662)], [(546, 521), (597, 478)], [(512, 522), (458, 483)], [(442, 593), (471, 654)], [(426, 579), (369, 599)]],
         "finish_line": [(366, 474), (426, 477)],
-        "start_position": [(390, 430), (360, 430)]
+        "start_position": [(390, 430), (360, 430)],
+        "ideal_time": 20,
+        "max_time": 40
     }
 ]
 
@@ -72,8 +78,10 @@ class GameEnvironment:
         self.computer_car.reset(self.checkpoints, self.finish_line_pos, self.start_position[1])
         self.can_start_level = False
 
-    def next_level(self, won_round):
-        self.final_score[self.current_level] = self.player_car.current_score
+    def next_level(self):
+        level_time = pygame.time.get_ticks() - self.start_time
+        print(level_time)
+        self.final_score[self.current_level] = self.calculate_score(level_time, self.current_level, self.player_car.current_score)
         self.current_level += 1
         if self.current_level >= len(LEVELS):
             self.menu.menu_booleans["show_endscreen"] = True
@@ -84,9 +92,10 @@ class GameEnvironment:
             self.menu.menu_booleans["show_nextlevel_menu"] = True
             self.computer_car.car_level += 1
             
-            self.perks.append(self.menu.next_level_menu(self.current_level, self.player_car.current_score, self.perks[len(self.perks)-1]))
+            self.perks.append(self.menu.next_level_menu(self.current_level, self.final_score[self.current_level-1], self.perks[len(self.perks)-1]))
             self.player_car.set_perks(self.perks[len(self.perks)-1])
             self.computer_car.set_perks(self.perks[len(self.perks)-1])
+
             self.load_level(self.current_level)
 
     def start(self):
@@ -104,12 +113,14 @@ class GameEnvironment:
                 pygame.quit()
                 quit()
             if event.type == pygame.KEYDOWN:
-                self.can_start_level = True
+                if self.can_start_level == False:
+                    self.can_start_level = True
+                    self.start_time = pygame.time.get_ticks()
                 if event.key == pygame.K_ESCAPE:
                     self.menu.menu_booleans["is_game_paused"] = True
                 if event.key == pygame.K_m:
                     #self.is_show_menu = True
-                    self.next_level(True)
+                    self.next_level()
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 click_pos = pygame.mouse.get_pos()
@@ -143,6 +154,18 @@ class GameEnvironment:
 
         self.draw()
         self.clock.tick(FPS)
+
+
+    def calculate_score(self, level_time, level, checkpoints_score):
+        ideal_time = LEVELS[level]["ideal_time"]
+        max_time = LEVELS[level]["max_time"]
+
+        level_time_seconds = level_time / 1000
+
+        time_factor = max(0, 1 - (level_time_seconds - ideal_time) / (max_time - ideal_time))
+
+        final_score = round(checkpoints_score * time_factor)
+        return final_score
 
 
     def draw(self):
@@ -213,10 +236,10 @@ if __name__ == '__main__':
 
         if game.player_car.hit_finish():
             game.menu.menu_booleans["is_perk_unlocked"] = True
-            game.next_level(won_round=True)
+            game.next_level()
         elif game.computer_car.hit_finish():
             game.menu.menu_booleans["is_perk_unlocked"] = False
-            game.next_level(won_round=False)
+            game.next_level()
         
         if game.menu.menu_booleans["is_game_paused"] == True:
             print("GAME IS PAUSED")

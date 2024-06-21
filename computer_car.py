@@ -8,7 +8,7 @@ from utils import calculate_angle, get_random_point_on_line, is_point_on_line
 class ComputerCar(Car):
     def __init__(self, car_level):
         super().__init__()
-        self.vel = 3
+        self.vel = 5
         self.car_level = car_level + 1
 
     def reset(self, checkpoints, finish_line_pos, start_position):

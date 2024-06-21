@@ -24,9 +24,9 @@ QUIT_BUTTON = Button(BUTTON_IMG, (640, 580), "QUIT", FONT_54, COLOR, COLOR_HOVER
 
 NEXT_BUTTON = Button(BUTTON_IMG2, (640, 520), "NEXT LEVEL", FONT_40, COLOR, COLOR_HOVER)
 QUIT_BUTTON2 = Button(BUTTON_IMG2, (640, 620), "QUIT", FONT_40, COLOR, COLOR_HOVER)
-ENGINE_PERK = Button(BUTTON_IMG3, (480, 420), "Engine", FONT_14, COLOR, COLOR_HOVER)
-STEERING_PERK = Button(BUTTON_IMG3, (640, 420), "Steering", FONT_14, COLOR, COLOR_HOVER)
-SABOTAGE_PERK = Button(BUTTON_IMG3, (800, 420), "Sabotage", FONT_14, COLOR, COLOR_HOVER)
+ENGINE_PERK = Button(BUTTON_IMG3, (480, 360), "Engine", FONT_14, COLOR, COLOR_HOVER)
+STEERING_PERK = Button(BUTTON_IMG3, (640, 360), "Steering", FONT_14, COLOR, COLOR_HOVER)
+SABOTAGE_PERK = Button(BUTTON_IMG3, (800, 360), "Sabotage", FONT_14, COLOR, COLOR_HOVER)
 
 
 class Menu:
@@ -69,7 +69,7 @@ class Menu:
 
             screen_text = FONT_80.render(("Finished level " + str(current_level)), True, COLOR)
             text_rect = screen_text.get_rect(center=(640, 100))
-            screen_text2 = FONT_40.render(("Score: " + str(current_score)), True, COLOR)
+            screen_text2 = FONT_40.render(("Round score: " + str(current_score)), True, COLOR)
             text_rect2 = screen_text2.get_rect(center=(640, 200))
             self.window.blit(screen_text, text_rect)
             self.window.blit(screen_text2, text_rect2)
@@ -110,13 +110,13 @@ class Menu:
                     screen_text4 = FONT_14.render("No perk selected.", True, COLOR)
 
                 if perks == [1, 0, 0]:
-                    screen_text4 = FONT_14.render("Engine upgrade.", True, COLOR)
+                    screen_text4 = FONT_14.render("Engine upgrade selected.", True, COLOR)
                 if perks == [0, 1, 0]:
-                    screen_text4 = FONT_14.render("Steering upgrade.", True, COLOR)
+                    screen_text4 = FONT_14.render("Steering upgrade selected.", True, COLOR)
                 if perks == [0, 0, 1]:
-                    screen_text4 = FONT_14.render("Sabotage enemy.", True, COLOR)
+                    screen_text4 = FONT_14.render("Sabotage enemy selected.", True, COLOR)
 
-                text_rect4 = screen_text4.get_rect(center=(640, 480))
+                text_rect4 = screen_text4.get_rect(center=(640, 440))
                 self.window.blit(screen_text4, text_rect4)
 
             pygame.display.flip()
