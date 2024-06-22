@@ -3,7 +3,7 @@ import pygame
 from computer_car import ComputerCar
 from menu import Menu
 from player_car import PlayerCar
-from utils import draw_checkpoint_onclick, draw_rays
+from utils import draw_checkpoint_onclick, draw_rays, load_leaderboard, save_leaderboard
 
 pygame.init()
 
@@ -52,7 +52,7 @@ class GameEnvironment:
         self.player_car = player_car
         self.computer_car = computer_car
 
-        self.menu_booleans = {"show_menu": True, "is_game_paused": False, "show_nextlevel_menu": False, "show_endscreen": False, "is_perk_unlocked": True}
+        self.menu_booleans = {"show_main_menu": True, "is_game_paused": False, "show_nextlevel_menu": False, "show_endscreen": False, "show_leaderboard_menu": False, "is_perk_unlocked": True}
         self.menu = Menu(self.window, self.menu_booleans)
         
         self.is_game_over = False
@@ -80,14 +80,12 @@ class GameEnvironment:
 
     def next_level(self):
         level_time = pygame.time.get_ticks() - self.start_time
-        print(level_time)
         self.final_score[self.current_level] = self.calculate_score(level_time, self.current_level, self.player_car.current_score)
         self.current_level += 1
         if self.current_level >= len(LEVELS):
             self.menu.menu_booleans["show_endscreen"] = True
             self.menu.end_screen(self.final_score)
-            pygame.quit()
-            quit()
+            self.reset_to_level_1()
         else:
             self.menu.menu_booleans["show_nextlevel_menu"] = True
             self.computer_car.car_level += 1
@@ -99,7 +97,7 @@ class GameEnvironment:
             self.load_level(self.current_level)
 
     def start(self):
-        if self.menu.menu_booleans["show_menu"]:
+        if self.menu.menu_booleans["show_main_menu"]:
             self.menu.main_menu()
         else:
             self.play()
@@ -155,6 +153,11 @@ class GameEnvironment:
         self.draw()
         self.clock.tick(FPS)
 
+    def reset_to_level_1(self):
+        self.current_level = 0
+        self.load_level(self.current_level)
+        self.perks = [[0, 0, 0]]
+
 
     def calculate_score(self, level_time, level, checkpoints_score):
         ideal_time = LEVELS[level]["ideal_time"]
@@ -166,7 +169,6 @@ class GameEnvironment:
 
         final_score = round(checkpoints_score * time_factor)
         return final_score
-
 
     def draw(self):
         self.window.blit(self.track_border, (0, 0))

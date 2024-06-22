@@ -1,6 +1,10 @@
 import math
 import random
 import pygame
+import json
+import os
+
+LEADERBOARD_FILE = 'leaderboard.json'
 
 
 def scale_image(img, factor):
@@ -71,3 +75,20 @@ def draw_rays(surface, start_pos, direction, angle, length):
     end_x, end_y = calculate_line_endpoints(start_pos[0], start_pos[1], angle + direction, length)
     pygame.draw.line(surface, (0, 255, 0), start_pos, (end_x, end_y), 3)
 
+
+
+def save_leaderboard(data):
+        with open(LEADERBOARD_FILE, 'w') as f:
+            json.dump(data, f)
+
+def load_leaderboard():
+    if os.path.exists(LEADERBOARD_FILE):
+        try:
+            with open(LEADERBOARD_FILE, 'r') as f:
+                return json.load(f)
+        except json.JSONDecodeError:    # empty or corrupt
+            return []
+    else:
+        return []
+        
+        

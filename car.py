@@ -22,7 +22,6 @@ class Car:
         self.max_vel = MAX_VELOCITY
         self.rotation_vel = ROTATION_VELOCITY
         self.acceleration = ACCELERATION
-        self.upgrades_list = []
         
     def reset(self, checkpoints, finish_line_pos):
         self.angle = 0
