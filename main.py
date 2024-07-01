@@ -3,7 +3,7 @@ import pygame
 from computer_car import ComputerCar
 from menu import Menu
 from player_car import PlayerCar
-from utils import draw_checkpoint_onclick, draw_rays
+from utils import draw_rays
 
 pygame.init()
 
@@ -52,7 +52,7 @@ class GameEnvironment:
         self.player_car = player_car
         self.computer_car = computer_car
 
-        self.menu_booleans = {"show_main_menu": True, "show_nextlevel_menu": False, "show_endscreen": False, "show_leaderboard_menu": False, "is_perk_unlocked": True}  # perk false
+        self.menu_booleans = {"show_main_menu": True, "show_nextlevel_menu": False, "show_endscreen": False, "show_leaderboard_menu": False, "is_perk_unlocked": False}
         self.menu = Menu(self.window, self.menu_booleans)
         
         self.is_game_over = False
@@ -62,8 +62,6 @@ class GameEnvironment:
         self.load_level(self.current_level)
 
         self.perks = [[0, 0, 0]]     # [engine upgrade, steering upgrade, enemy sabotage]
-        
-        self.new_checkpoint_pos = []    #
 
 
     def load_level(self, level_index):
@@ -89,11 +87,9 @@ class GameEnvironment:
         else:
             self.menu.menu_booleans["show_nextlevel_menu"] = True
             self.computer_car.car_level += 1
-            
             self.perks.append(self.menu.next_level_menu(self.current_level, self.final_score[self.current_level-1], self.perks[len(self.perks)-1]))
             self.player_car.set_perks(self.perks[len(self.perks)-1])
             self.computer_car.set_perks(self.perks[len(self.perks)-1])
-
             self.load_level(self.current_level)
 
     def start(self):
@@ -108,20 +104,11 @@ class GameEnvironment:
                 self.is_game_over = True
                 pygame.quit()
                 quit()
-            if event.type == pygame.KEYDOWN:
-                if self.can_start_level == False:
+            if event.type == pygame.KEYDOWN:   
+                if self.can_start_level == False:   # waits for any key input to start moving computer car
                     self.can_start_level = True
                     self.start_time = pygame.time.get_ticks()
-                if event.key == pygame.K_m:
-                    #self.is_show_menu = True
-                    self.next_level()
             
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                click_pos = pygame.mouse.get_pos()
-                self.new_checkpoint_pos.append(click_pos)
-                self.new_checkpoint_pos, self.checkpoints = draw_checkpoint_onclick(self.new_checkpoint_pos, self.checkpoints)
-            """"""
-                
         if self.can_start_level:
             keys = pygame.key.get_pressed()
             self.player_car.move_input(keys)
@@ -130,17 +117,15 @@ class GameEnvironment:
             if self.player_car.collide(self.track_border_mask) != None:
                 self.player_car.hit_wall()
 
-
+            # force the computer the other way if lateral ray collides with track border
             surface_left_rays_mask = pygame.mask.from_surface(surface_left_rays.convert_alpha())
             if surface_left_rays_mask.overlap(self.track_border_mask, (0,0)):
                 self.computer_car.angle += -self.computer_car.rotation_vel * 2
-                pass
-                
             surface_right_rays_mask = pygame.mask.from_surface(surface_right_rays.convert_alpha())
             if surface_right_rays_mask.overlap(self.track_border_mask, (0,0)):
                 self.computer_car.angle += self.computer_car.rotation_vel * 2
-                pass
 
+            # slow the computer car down to half if front ray collides with track border
             surface_front_ray_mask = pygame.mask.from_surface(surface_front_ray.convert_alpha())
             if surface_front_ray_mask.overlap(self.track_border_mask, (0,0)) and self.computer_car.vel > self.computer_car.max_vel / 2:
                 self.computer_car.vel = self.computer_car.vel * 2/3
@@ -149,7 +134,6 @@ class GameEnvironment:
 
         self.draw()
         self.clock.tick(FPS)
-
 
     def draw(self):
         self.window.blit(self.track_border, (0, 0))
@@ -206,3 +190,4 @@ if __name__ == '__main__':
             running = False
 
     pygame.quit()
+

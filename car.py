@@ -1,5 +1,6 @@
 import pygame
 import math
+
 from utils import rotate_center_and_draw, scale_image
 
 CAR_IMG = scale_image(pygame.image.load("assets/car.png"), 0.5)
@@ -26,8 +27,8 @@ class Car:
         self.original_checkpoints = checkpoints[:]
         self.finish_line_pos = finish_line_pos[:]
      
-    def draw(self, win):
-        rotate_center_and_draw(win, self.img, (self.x, self.y), self.angle)
+    def draw(self, window):
+        rotate_center_and_draw(window, self.img, (self.x, self.y), self.angle)
 
     def move(self):
         self.angle = (self.angle + 360) % 360

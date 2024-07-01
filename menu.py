@@ -22,7 +22,6 @@ COLOR_HOVER = "#ffffff"
 PLAY_BUTTON = Button(BUTTON_IMG, (640, 320), "START", FONT_54, COLOR, COLOR_HOVER)
 LEADERBOARD_BUTTON = Button(BUTTON_IMG, (640, 450), "LEADERBOARD", FONT_54, COLOR, COLOR_HOVER)
 QUIT_BUTTON = Button(BUTTON_IMG, (640, 580), "QUIT", FONT_54, COLOR, COLOR_HOVER)
-
 NEXT_BUTTON = Button(BUTTON_IMG2, (640, 520), "NEXT LEVEL", FONT_40, COLOR, COLOR_HOVER)
 QUIT_BUTTON2 = Button(BUTTON_IMG2, (640, 620), "QUIT", FONT_40, COLOR, COLOR_HOVER)
 LEADERBOARD_BUTTON2 = Button(BUTTON_IMG2, (640, 520), "LEADERBOARD", FONT_40, COLOR, COLOR_HOVER)
@@ -30,14 +29,13 @@ MAIN_MENU_BUTTON = Button(BUTTON_IMG2, (640, 520), "MAIN MENU", FONT_40, COLOR, 
 ENGINE_PERK = Button(BUTTON_IMG3, (480, 360), "Engine", FONT_14, COLOR, COLOR_HOVER)
 STEERING_PERK = Button(BUTTON_IMG3, (640, 360), "Steering", FONT_14, COLOR, COLOR_HOVER)
 SABOTAGE_PERK = Button(BUTTON_IMG3, (800, 360), "Sabotage", FONT_14, COLOR, COLOR_HOVER)
-
 SAVE_SCORE_BUTTON = Button(BUTTON_IMG3, (640, 440), "Save score", FONT_14, COLOR, COLOR_HOVER)
+
 
 class Menu:
     def __init__(self, window, menu_booleans):
         self.window = window
         self.menu_booleans = menu_booleans
-
 
     def main_menu(self):
         while self.menu_booleans["show_main_menu"]:
@@ -126,7 +124,7 @@ class Menu:
                 self.window.blit(screen_text4, text_rect4)
 
             pygame.display.update()
-        return perks
+        return perks    # returns the upgrade selected for the next level when closing the menu
     
     def end_screen(self, final_score):
         input_box = pygame.Rect(565, 380, 140, 32)
@@ -143,16 +141,13 @@ class Menu:
             text_rect3 = screen_text3.get_rect(center=(640, 270))
             screen_text4 = FONT_14.render("Name:", True, COLOR)
             text_rect4 = screen_text4.get_rect(center=(640, 365))
-            self.window.blit(screen_text, text_rect)
-            self.window.blit(screen_text2, text_rect2)
-            self.window.blit(screen_text3, text_rect3)
-            self.window.blit(screen_text4, text_rect4)
+            for text, rect in zip([screen_text, screen_text2, screen_text3, screen_text4], [text_rect, text_rect2, text_rect3, text_rect4]):
+                self.window.blit(text, rect)
 
             mouse_pos = pygame.mouse.get_pos()
             for button in [SAVE_SCORE_BUTTON, LEADERBOARD_BUTTON2, QUIT_BUTTON2]:
                 button.change_color_hover(mouse_pos)
                 button.update(self.window)
-
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

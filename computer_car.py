@@ -13,7 +13,7 @@ class ComputerCar(Car):
         super().__init__()
         self.img = CAR_IMG
         self.mask = CAR_MASK
-        self.vel = self.max_vel # -0.5
+        self.vel = self.max_vel
         self.car_level = car_level
 
     def reset(self, checkpoints, finish_line_pos, start_position):
@@ -24,7 +24,7 @@ class ComputerCar(Car):
     def draw(self, window):
         super().draw(window)
         for target in self.path_targets:
-            pygame.draw.circle(window, (255, 0, 0), target, 8)
+            pygame.draw.circle(window, "red", target, 8)
         
     def move(self):
         self.update_angle()
@@ -53,24 +53,24 @@ class ComputerCar(Car):
     def update_angle(self):
         if len(self.path_targets) == 0:
             self.find_targets()
-        target = self.path_targets[0]
-
-        radian_angle = calculate_angle(self.center_pos, target)
-        
-        if target[1] > self.y:
-            radian_angle += math.pi
-        degrees_angle = math.degrees(radian_angle)
-        difference_in_angle = self.angle - degrees_angle
-
-        if difference_in_angle >= 180:
-            difference_in_angle += -360
-        if difference_in_angle <= -180:
-            difference_in_angle += 360
-        
-        if difference_in_angle > 0:
-            self.angle -= min(self.rotation_vel, abs(difference_in_angle))
         else:
-            self.angle += min(self.rotation_vel, abs(difference_in_angle))
+            target = self.path_targets[0]
+            radian_angle = calculate_angle(self.center_pos, target)
+            
+            if target[1] > self.y:
+                radian_angle += math.pi
+            degrees_angle = math.degrees(radian_angle)
+            difference_in_angle = self.angle - degrees_angle
+
+            if difference_in_angle >= 180:
+                difference_in_angle += -360
+            if difference_in_angle <= -180:
+                difference_in_angle += 360
+            
+            if difference_in_angle > 0:
+                self.angle -= min(self.rotation_vel, abs(difference_in_angle))
+            else:
+                self.angle += min(self.rotation_vel, abs(difference_in_angle))
 
     def hit_target(self):
         car_rectangle = pygame.Rect(self.x, self.y, self.img.get_width(), self.img.get_height())
@@ -78,7 +78,7 @@ class ComputerCar(Car):
             del self.path_targets[0]   
 
     def hit_finish(self):
-        if is_point_on_line(self.center_pos, self.finish_line_pos, max(self.img.get_width(), self.img.get_height())/2) and len(self.path_targets) == 0:
+        if len(self.path_targets) == 0 and is_point_on_line(self.center_pos, self.finish_line_pos, max(self.img.get_width(), self.img.get_height())/2):
             return True
         return False
 
@@ -86,4 +86,4 @@ class ComputerCar(Car):
         if perks_list[2]:
             self.car_level += -1
             self.max_vel += -0.5
-            # print("Computer car was sabotated: car level ", self.car_level)
+

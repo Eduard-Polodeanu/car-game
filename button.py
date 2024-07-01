@@ -15,10 +15,10 @@ class Button():
 		self.text_rect = self.text_render.get_rect(center=(self.x, self.y))
 
 
-	def update(self, screen):
+	def update(self, window):
 		if self.image is not None:
-			screen.blit(self.image, self.rect)
-		screen.blit(self.text_render, self.text_rect)
+			window.blit(self.image, self.rect)
+		window.blit(self.text_render, self.text_rect)
 
 	def check_for_click(self, position):
 		if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):

@@ -5,6 +5,7 @@ from utils import is_point_on_line
 
 ACCELERATION = 1
 
+
 class PlayerCar(Car):
     def __init__(self):
         super().__init__()
@@ -22,8 +23,8 @@ class PlayerCar(Car):
     def draw(self, window):
         super().draw(window)
         for i in range(0, len(self.current_checkpoints)):
-            pygame.draw.line(window, (0, 0, 0), self.current_checkpoints[i][0], self.current_checkpoints[i][1], 3)
-        pygame.draw.line(window, (255, 255, 255), self.finish_line_pos[0], self.finish_line_pos[1], 3)
+            pygame.draw.line(window, "black", self.current_checkpoints[i][0], self.current_checkpoints[i][1], 3)
+        pygame.draw.line(window, "white", self.finish_line_pos[0], self.finish_line_pos[1], 3)
 
     def move(self):
         super().move()
@@ -34,7 +35,7 @@ class PlayerCar(Car):
         is_moving = False
 
         if keys[pygame.K_a]:
-            if not keys[pygame.K_s]:
+            if not keys[pygame.K_s]:    # if moving backwards, rotate the other direction
                 self.angle += self.rotation_vel
             else:
                 self.angle -= self.rotation_vel
@@ -57,19 +58,19 @@ class PlayerCar(Car):
             self.vel = max(self.vel - self.acceleration/4, 0)
             self.move()
 
-    def hit_wall(self):
+    def hit_wall(self):     # bounce the opposite way
         self.vel = -self.vel/3
         self.move()
 
     def hit_checkpoint(self):
-        if len(self.current_checkpoints):
+        if len(self.current_checkpoints) > 0:
             if is_point_on_line(self.center_pos, self.current_checkpoints[0], max(self.img.get_width(), self.img.get_height())/2):
                 self.current_score += round(100/len(self.original_checkpoints)*100)
                 del self.current_checkpoints[0]
                 self.checkpoints_left += -1
 
     def hit_finish(self):
-        if is_point_on_line(self.center_pos, self.finish_line_pos, max(self.img.get_width(), self.img.get_height())/2) and self.checkpoints_left == 0:
+        if self.checkpoints_left == 0 and is_point_on_line(self.center_pos, self.finish_line_pos, max(self.img.get_width(), self.img.get_height())/2):
             return True
         return False
     
@@ -77,9 +78,6 @@ class PlayerCar(Car):
         if perks_list[0]:
             self.acceleration += 0.1
             self.max_vel += 0.5
-            # print("Engine upgraded: ", self.acceleration, self.max_vel)
         if perks_list[1]:
             self.rotation_vel += 1
-            # print("Steering upgraded: ", self.rotation_vel)
 
-    

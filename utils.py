@@ -15,17 +15,6 @@ def rotate_center_and_draw(win, image, top_left, angle):
     rotated_image = pygame.transform.rotate(image, angle)
     new_rect = rotated_image.get_rect(center=image.get_rect(topleft=top_left).center)
     win.blit(rotated_image, new_rect.topleft)
-    #win.blit(rotated_image, top_left)
-    #pygame.draw.rect(win, (255, 0, 0), rotated_image.get_rect(topleft=top_left), 2)
-
-
-def draw_checkpoint_onclick(checkpoint_pos, all_checkpoints):
-    if len(checkpoint_pos) == 2:
-        print("Checkpoint added: " + str(checkpoint_pos))
-        all_checkpoints.append(checkpoint_pos)
-        checkpoint_pos = []
-        print("All checkpoints: ", all_checkpoints)
-    return checkpoint_pos, all_checkpoints
 
 
 def calculate_line_lenght(point1, point2):  # distanta euclidiana
@@ -81,8 +70,8 @@ def draw_rays(surface, start_pos, direction, angle, length):
 
 
 def save_leaderboard(data):
-        with open(LEADERBOARD_FILE, 'w') as f:
-            json.dump(data, f)
+    with open(LEADERBOARD_FILE, 'w') as f:
+        json.dump(data, f)
 
 def load_leaderboard():
     if os.path.exists(LEADERBOARD_FILE):
