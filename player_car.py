@@ -3,10 +3,12 @@ import pygame
 from car import Car
 from utils import is_point_on_line
 
+ACCELERATION = 1
 
 class PlayerCar(Car):
     def __init__(self):
         super().__init__()
+        self.acceleration = ACCELERATION
         self.current_score = 0
 
     def reset(self, checkpoints, finish_line_pos, start_position):
@@ -27,6 +29,33 @@ class PlayerCar(Car):
         super().move()
         self.hit_checkpoint()
 
+
+    def move_input(self, keys):
+        is_moving = False
+
+        if keys[pygame.K_a]:
+            if not keys[pygame.K_s]:
+                self.angle += self.rotation_vel
+            else:
+                self.angle -= self.rotation_vel
+        if keys[pygame.K_d]:
+            if not keys[pygame.K_s]:
+                self.angle -= self.rotation_vel
+            else:
+                self.angle += self.rotation_vel
+                
+        if keys[pygame.K_w]:
+            is_moving = True
+            self.vel = min(self.vel + self.acceleration, self.max_vel)
+            self.move()
+        if keys[pygame.K_s]:
+            is_moving = True
+            self.vel = max(self.vel - self.acceleration, -self.max_vel/2)
+            self.move()
+
+        if not is_moving:
+            self.vel = max(self.vel - self.acceleration/4, 0)
+            self.move()
 
     def hit_wall(self):
         self.vel = -self.vel/3

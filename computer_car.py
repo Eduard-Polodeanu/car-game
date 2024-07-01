@@ -2,14 +2,19 @@ import pygame
 import math
 
 from car import Car
-from utils import calculate_angle, get_random_point_on_line, is_point_on_line
+from utils import calculate_angle, get_random_point_on_line, is_point_on_line, scale_image
+
+CAR_IMG = scale_image(pygame.image.load("assets/car-computer.png"), 0.5)
+CAR_MASK = pygame.mask.from_surface(scale_image(pygame.image.load("assets/car-computer-hitbox.png"), 0.5))
 
 
 class ComputerCar(Car):
     def __init__(self, car_level):
         super().__init__()
-        self.vel = 5
-        self.car_level = car_level + 1
+        self.img = CAR_IMG
+        self.mask = CAR_MASK
+        self.vel = self.max_vel # -0.5
+        self.car_level = car_level
 
     def reset(self, checkpoints, finish_line_pos, start_position):
         super().reset(checkpoints, finish_line_pos)
@@ -34,7 +39,6 @@ class ComputerCar(Car):
             delta_x = point_B[0] - point_A[0]
             delta_y = point_B[1] - point_A[1]
 
-            
             x1 = point_A[0] + (0.5 + 1/precision) * delta_x
             y1 = point_A[1] + (0.5 + 1/precision) * delta_y
             point_M = (x1, y1)
@@ -49,11 +53,10 @@ class ComputerCar(Car):
     def update_angle(self):
         if len(self.path_targets) == 0:
             self.find_targets()
-
         target = self.path_targets[0]
 
-        radian_angle = calculate_angle((self.x, self.y), target)        # toa
-
+        radian_angle = calculate_angle(self.center_pos, target)
+        
         if target[1] > self.y:
             radian_angle += math.pi
         degrees_angle = math.degrees(radian_angle)
@@ -64,12 +67,10 @@ class ComputerCar(Car):
         if difference_in_angle <= -180:
             difference_in_angle += 360
         
-        # print(self.angle, degrees_angle, difference_in_angle)
         if difference_in_angle > 0:
             self.angle -= min(self.rotation_vel, abs(difference_in_angle))
         else:
             self.angle += min(self.rotation_vel, abs(difference_in_angle))
-
 
     def hit_target(self):
         car_rectangle = pygame.Rect(self.x, self.y, self.img.get_width(), self.img.get_height())
@@ -84,4 +85,5 @@ class ComputerCar(Car):
     def set_perks(self, perks_list):
         if perks_list[2]:
             self.car_level += -1
+            self.max_vel += -0.5
             # print("Computer car was sabotated: car level ", self.car_level)

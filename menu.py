@@ -67,7 +67,7 @@ class Menu:
                         pygame.quit()
                         quit()
 
-            pygame.display.flip()
+            pygame.display.update()
 
     def next_level_menu(self, current_level, current_score, perks):
         while self.menu_booleans["show_nextlevel_menu"]:
@@ -125,14 +125,13 @@ class Menu:
                 text_rect4 = screen_text4.get_rect(center=(640, 440))
                 self.window.blit(screen_text4, text_rect4)
 
-            pygame.display.flip()
+            pygame.display.update()
         return perks
     
     def end_screen(self, final_score):
         input_box = pygame.Rect(565, 380, 140, 32)
         input_box_text = ''
         is_input_box_active = False
-        name_to_save = ''
         while self.menu_booleans["show_endscreen"]:
             self.window.blit(BG_IMG, (0, 0))
 
@@ -185,7 +184,7 @@ class Menu:
             input_box.w = max(150, screen_text5.get_width()+10)
             pygame.draw.rect(self.window, COLOR, input_box, 2)
 
-            pygame.display.flip()
+            pygame.display.update()
         
     def leaderboard_menu(self):
         while self.menu_booleans["show_leaderboard_menu"]:
@@ -221,7 +220,7 @@ class Menu:
                         pygame.quit()
                         quit()
 
-            pygame.display.flip()
+            pygame.display.update()
 
 
     def draw_start_prompt(self):
